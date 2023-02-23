@@ -3,18 +3,6 @@ const camera = require('3d-view-controls');
 import * as Stats from 'stats.js';
 import { GUI } from 'dat.gui';
 
-// #region ts-jest test ***********************************************************************
-export const add = (a:number, b:number): number => {
-    return a + b;
-}
-// #endregion ts-jest test ********************************************************************
-
-
-
-
-
-
-
 // #region WebGPU initialization **************************************************************
 export interface IWebGPUInit {
     device?: GPUDevice;

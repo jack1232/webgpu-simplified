@@ -343,7 +343,6 @@ const projectionMat = ws.createProjectionMat(aspectRatio);
 
 // combine model, view, and projection matrices to form mvp matrix:
 const mvpMat = ws.combineMvpMat(modelMat, viewMat, projectionMat);
-
 ```
 You can see that our package also include a `getCamera` function based a `npm` library `3d-view-controls`. 
 This function let you create an easy to use camera that allows you to interact with graphics objects in
