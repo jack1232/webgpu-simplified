@@ -30,11 +30,6 @@
   "files": [
     "lib/**/*"
   ],
-  "jest": {
-    "setupFiles": [
-      "jest-canvas-mock"
-    ]
-  },
   "devDependencies": {
     "prettier": "^2.8.4",
     "ts-jest": "^29.0.5",
