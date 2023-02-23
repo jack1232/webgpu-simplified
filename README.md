@@ -3,7 +3,7 @@ WebGPU is a work-in-progress graphics API and future web standard for graphics a
 The helper functions contained in this package can help you build WebGPU apps quickly and avoid code deplication in creating GPU buffers, render/compute pipelines, render pass, and 3D transformations. This mini library does not do it all, and if you want add more features to it, you can do it by pulling the GitHub repo. In some cases where a particular feature may not be implemented in the package, you can always write the standard WebGPU code for it, which is much more flexible than a render engine. 
 
 
-## Usage
+# Usage
 
 Install the library by running
 
@@ -26,14 +26,14 @@ import {
 } from "webgpu-simplified"
 ```
 
-## Descriptions about Functions
+# Descriptions about Functions
 
 The detailed explanation about the functions included in the package can be found 
 [here](https://jack1232.github.io/webgpu-simplified/). 
 
-## Examples
+# Examples
 
-### Simplify render-pipeline-descriptor creation
+## Simplify render-pipeline-descriptor creation
 
 Supporse we have the following render pipeline descriptor written in standard WebGPU code:
 
@@ -108,7 +108,7 @@ const descriptor = ws.createRenderPipelineDescriptor({
 ```
 This greatly simplifies the original WebGPU code for creating the same render pipeline descriptor.
 
-### Simplify render-pass-descriptor creation
+## Simplify render-pass-descriptor creation
 
 Suppose we have the following render pass descriptor written in the standard WebGPU code:
 
@@ -141,7 +141,7 @@ const descriptor = ws.createRenderPassDescriptor({
     msaaCount: 4,
 });
 ```
-### Simplify bind-group creation
+## Simplify bind-group creation
 
 Here is the standard WebGPU code for creating a uniform bind group:
 
@@ -196,7 +196,7 @@ const uniformBindGroup = ws.createBindGroup(device, pipeline.getBindGroupLayout(
     uniformBuffers, otherBindingResources);
 ```
 
-### Update vertex buffers
+## Update vertex buffers
 
 If varying some parameters causes changes in the vertex data and GPU buffer size (e.g. changing the radius and u-v segments in a UV sphere example), we need to update the vertex buffers. Here is the standard WebGPU code for doing it:
 
@@ -249,7 +249,7 @@ const updateBuffers = (origNumVertices:number) => {
 }
 ```
 
-### Create GPU buffers with data 
+## Create GPU buffers with data 
 We can create a buffer with data initialize it using the following standard WebGPU code:
 
 ```
@@ -319,3 +319,40 @@ const uniformBuffer = ws.createBufferWithData(device, data, ws.BufferType.Unifor
 // create a storage buffer using data with a type of Float32Array:
 const uniformBuffer = ws.createBufferWithData(device, data, ws.BufferType.Storage); 
 ```
+
+## Transformations
+
+Like WebGL, WebGPU does not provide any functions for working with model, view, and projection transformations. 
+In this mini library, I implement several helper functions for creating varous 3D transformations using a popular JavaScript package `gl-matrix`.
+
+Here is the sample code for creating transformations:
+
+```
+import * as ws from 'webgpu-simplified';
+
+// create a model matrix using translation, rotation, and scale:
+const modelMat = ws.createModelMat(translation, rotation, scale);
+
+// create a view matrix and a camera
+const vt = ws.createViewTransform(cameraPosition);
+const viewMat = vt.viewMat;
+let camera = ws.getCamera(canvas, vt.cameraOptions);
+
+// create a projection matrix:
+const projectionMat = ws.createProjectionMat(aspectRatio);
+
+// combine model, view, and projection matrices to form mvp matrix:
+const mvpMat = ws.combineMvpMat(modelMat, viewMat, projectionMat);
+
+```
+You can see that our package also include a `getCamera` function based a `npm` library `3d-view-controls`. 
+This function let you create an easy to use camera that allows you to interact with graphics objects in
+the scene using mouse, such as pan, rotate, and zoom in/out the objects.
+
+## Utility
+
+This package also include some utility functions.
+
+#license
+
+Copyright (c) 2023 Dr. Jack Xu. MIT License.
