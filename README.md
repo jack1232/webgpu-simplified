@@ -354,7 +354,7 @@ This package also include some utility functions.
 
 # Contribution, Suggestions
 
-I accept pull requests ([GitHub repo](https://github.com/jack1232/webgpu-simplified) for fixing issue or sharing your
+I accept pull requests ([GitHub repo](https://github.com/jack1232/webgpu-simplified)) for fixing issue or sharing your
 own helper functions on WebGPU with others. Any suggestions and new feature requests are also appreciated.
 
 # License
