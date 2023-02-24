@@ -352,6 +352,11 @@ the scene using mouse, such as pan, rotate, and zoom in/out the objects.
 
 This package also include some utility functions.
 
-#license
+# Contribution, Suggestions
+
+I accept pull requests ([GitHub repo](https://github.com/jack1232/webgpu-simplified) for fixing issue or sharing your
+own helper functions on WebGPU with others. Any suggestions and new feature requests are also appreciated.
+
+# License
 
 Copyright (c) 2023 Dr. Jack Xu. MIT License.
