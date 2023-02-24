@@ -19,20 +19,41 @@
 <ul class="tsd-signatures tsd-kind-function">
 <li class="tsd-signature tsd-anchor-link" id="updateVertexBuffers">update<wbr/>Vertex<wbr/>Buffers<span class="tsd-signature-symbol">(</span>device<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GPUDevice</span>, p<span class="tsd-signature-symbol">: </span><a href="../interfaces/IPipeline.html" class="tsd-signature-type" data-tsd-kind="Interface">IPipeline</a>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span>, origNumVertices<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span><a href="#updateVertexBuffers" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>This function updates the vertex buffers when the vertex data is changed by varying some parameters by the user. 
+Let&#39;s take the UV sphere as an example. A UV sphere can have three parameters: radius, u-segments, and v-segments. 
+Varying the radius parameter only changes the data values but not the buffer size, while warying the u- (or v-) 
+segments parameter will change both the data values and buffer size. In the former case, we can write the 
+new data directly into the original buffers; while in the latter case, we have to destroy the original buffers and recreate 
+the new buffers with new buffer size, and then write the new data into the newly created buffers. Here, we check whether the buffer
+size is changed or not by comparing the length of the original data (called <code>origNumVertices</code>) with that of the new data.</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>device: <span class="tsd-signature-type">GPUDevice</span></h5></li>
+<h5>device: <span class="tsd-signature-type">GPUDevice</span></h5>
+<div class="tsd-comment tsd-typography"><p>GPU device</p>
+</div></li>
 <li>
-<h5>p: <a href="../interfaces/IPipeline.html" class="tsd-signature-type" data-tsd-kind="Interface">IPipeline</a></h5></li>
+<h5>p: <a href="../interfaces/IPipeline.html" class="tsd-signature-type" data-tsd-kind="Interface">IPipeline</a></h5>
+<div class="tsd-comment tsd-typography"><p>Interface of <code>IPipeline</code></p>
+</div></li>
 <li>
-<h5>data: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5></li>
+<h5>data: <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">[]</span></h5>
+<div class="tsd-comment tsd-typography"><p>An array of vertex data. Note that this array should include the <code>index</code> data. For example, if a render pipeline 
+has <code>position</code>, <code>normal</code>, and <code>uv</code>, then this <code>data</code> array should defined by </p>
+<p><code>const data = [dat.positions, dat.normals, dat.uvs, dat.indices];</code></p>
+<p>If the data is generated in such a way that each vertex contains all attributes (<code>position</code>, <code>normal</code>, <code>uv</code> ) and  it is 
+stored in a single buffer, we can specify the <code>data</code> array using the code:</p>
+<p><code>data = [dat.vertices, dat.indices];</code></p>
+</div></li>
 <li>
-<h5>origNumVertices: <span class="tsd-signature-type">number</span></h5></li></ul></div>
+<h5>origNumVertices: <span class="tsd-signature-type">number</span></h5>
+<div class="tsd-comment tsd-typography"><p>The data length of the first element in the original <code>data</code> array.</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jack1232/webgpu-simplified/blob/08f3b35/src/index.ts#L219">index.ts:219</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/jack1232/webgpu-simplified/blob/579ebfb/src/index.ts#L357">index.ts:357</a></li></ul></aside></li></ul></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">

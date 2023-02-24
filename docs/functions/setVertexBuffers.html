@@ -19,20 +19,57 @@
 <ul class="tsd-signatures tsd-kind-function">
 <li class="tsd-signature tsd-anchor-link" id="setVertexBuffers">set<wbr/>Vertex<wbr/>Buffers<span class="tsd-signature-symbol">(</span>formats<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GPUVertexFormat</span><span class="tsd-signature-symbol">[]</span>, offsets<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, totalArrayStride<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span>, shaderLocations<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GPUVertexBufferLayout</span><span class="tsd-signature-symbol">&gt;</span><a href="#setVertexBuffers" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>This function sets the <code>buffers</code> attribute of the vertex state in a render pipeline. In this function, the input argument
+<code>formats</code> is a GPU vertex-format array. It can be specified as <code>&#39;float32&#39;</code>, <code>&#39;float32x2&#39;</code>,
+<code>&#39;float32x3&#39;</code>, <code>&#39;float32x4&#39;</code>, etc., which correspond to the WGSL style in the shader <code>f32</code>, <code>vec2&lt;f32&gt;</code>, 
+<code>vec3&lt;f32&gt;</code>, <code>vec4&lt;f32&gt;</code>, etc. If the vertex data is stored in a separate buffer for each attribute such as position,
+normal, and UV, you can simply provide only this input argument like <code>[&#39;float32x3&#39;, &#39;float32x3&#39;, &#39;float32x2&#39;]</code> and 
+ignore all the other optional arguments. In this case, the <code>setVertexBuffers</code> function will automatically 
+calculate the <code>offset</code>, <code>arrayStride</code>, and <code>shaderLocation</code> for each vertex attribute. Note that the <code>shaderLocation</code> 
+is set with an array filled with consecutive numbers like [0, 1, 2], which must match the  <code>@location</code> attribute specified 
+in the vertex shader. Otherwise, you need to manually specify the <code>shaderLocations</code> array argument.</p>
+<p>On the other hand, if you store the vertex data in a single buffer for all attributes (e.g., position, normal, and uv), you 
+will need to provide not only the vertex <code>formats</code> array, but also the <code>offsets</code> array. Here is an example
+of a single buffer that stores the <code>position</code> (<code>vec3&lt;f32&gt;</code>), <code>normal</code> (<code>vec3&lt;f32&gt;</code>), and <code>uv</code> (<code>vec2&lt;f32&gt;</code>) data. 
+The corresponding  <code>arrayStride</code> will be 12, 12, and 8, and the <code>offsets</code> array will be [0, 12, 24]. 
+In this case, you can set the <code>buffers</code> attribute by calling the function like this: </p>
+<p><code>const bufs = setVertexBuffers([&#39;float32x3&#39;, &#39;float32x3&#39;, &#39;float32x2&#39;], [0, 12, 24]);</code></p>
+<p>The above example assumes that all the vertex attributes (position, normal, and uv) stored in a 
+single buffer are used in the pipeline and vertex shader. What happens if not all the attributes in the buffer are needed. 
+For example, the pipeline and shader only need the <code>position</code> and <code>uv</code> data, but not the <code>normal</code> data. In this case,
+in addition to the <code>formats</code> and <code>offsets</code> arguments, you will also need to specify the <code>totalArrayStride</code>
+argument. The <code>arrayStride</code> for <code>position</code>, <code>normal</code>, and <code>uv</code> is 12, 12, and 8, respectively, so the 
+<code>totalArrayStride</code> = 12 + 12 + 8 = 32. Thus, we can create the <code>buffers</code> attribute using the following code</p>
+<p><code>const bufs = setVertexBuffers([&#39;float32x3&#39;, &#39;float32x2&#39;], [0, 24], 32);</code></p>
+<p>Note that the <code>offsets</code> array is set to [0, 24] rather than [0, 12], because the <code>uv</code> data starts after <code>position</code> and 
+<code>normal</code> data, while the <code>normal</code> data is still stored in the buffer even though it is not used in this example.</p>
+
+<h3>Returns</h3><p>An array of GPU vertex buffer layout.</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>formats: <span class="tsd-signature-type">GPUVertexFormat</span><span class="tsd-signature-symbol">[]</span></h5></li>
+<h5>formats: <span class="tsd-signature-type">GPUVertexFormat</span><span class="tsd-signature-symbol">[]</span></h5>
+<div class="tsd-comment tsd-typography"><p>GPU vertex format array with each element specifying the <code>GPUVertexFormat</code> of teh attribute.</p>
+</div></li>
 <li>
-<h5>offsets: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></h5></li>
+<h5>offsets: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></h5>
+<div class="tsd-comment tsd-typography"><p>The offset array that is optional. The offset, in bytes, is counted from the beginning of the element to the data 
+for the attribute. Note that the offset must be a multiple of the minimum of 4 and sizeof the <code>attrib.format</code>.</p>
+</div></li>
 <li>
-<h5>totalArrayStride: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></h5></li>
+<h5>totalArrayStride: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 0</span></h5>
+<div class="tsd-comment tsd-typography"><p>The stride, in bytes, between elements of the array. This is an optional argument.</p>
+</div></li>
 <li>
-<h5>shaderLocations: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></h5></li></ul></div>
+<h5>shaderLocations: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></h5>
+<div class="tsd-comment tsd-typography"><p>The numeric location associated with the attribute, such as position, normal, or uv, which will 
+correspond with a <code>@location</code> attribute declared in the vertex shader. This is an optional argument.</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">GPUVertexBufferLayout</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jack1232/webgpu-simplified/blob/08f3b35/src/index.ts#L134">index.ts:134</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/jack1232/webgpu-simplified/blob/579ebfb/src/index.ts#L229">index.ts:229</a></li></ul></aside></li></ul></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">

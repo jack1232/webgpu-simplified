@@ -19,18 +19,30 @@
 <ul class="tsd-signatures tsd-kind-function">
 <li class="tsd-signature tsd-anchor-link" id="createBufferWithData">create<wbr/>Buffer<wbr/>With<wbr/>Data<span class="tsd-signature-symbol">(</span>device<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GPUDevice</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, bufferType<span class="tsd-signature-symbol">?: </span><a href="../enums/BufferType.html" class="tsd-signature-type" data-tsd-kind="Enumeration">BufferType</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">GPUBuffer</span><a href="#createBufferWithData" aria-label="Permalink" class="tsd-anchor-icon"><svg class="icon icon-tabler icon-tabler-link" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none" id="icon-anchor-a"></path><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" id="icon-anchor-b"></path><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" id="icon-anchor-c"></path></svg></a></li>
 <li class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>This function creats a GPU buffer with data to initialize it. If the input data is a type of <code>Float32Array</code> 
+or <code>Float64Array</code>, it returns a vertex, uniform, or storage buffer specified by the enum <code>bufferType</code>. Otherwise,
+if the input data has a <code>Uint16Array</code> or <code>Uint32Array</code>, this function will return an index buffer.</p>
+</div>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li>
-<h5>device: <span class="tsd-signature-type">GPUDevice</span></h5></li>
+<h5>device: <span class="tsd-signature-type">GPUDevice</span></h5>
+<div class="tsd-comment tsd-typography"><p>GPU device</p>
+</div></li>
 <li>
-<h5>data: <span class="tsd-signature-type">any</span></h5></li>
+<h5>data: <span class="tsd-signature-type">any</span></h5>
+<div class="tsd-comment tsd-typography"><p>Input data that should be one of four data types: <code>Float32Array</code>, <code>Float64Array</code>, <code>Uint16Array</code>, and 
+<code>Uint32Array</code></p>
+</div></li>
 <li>
-<h5>bufferType: <a href="../enums/BufferType.html" class="tsd-signature-type" data-tsd-kind="Enumeration">BufferType</a><span class="tsd-signature-symbol"> = BufferType.Vertex</span></h5></li></ul></div>
+<h5>bufferType: <a href="../enums/BufferType.html" class="tsd-signature-type" data-tsd-kind="Enumeration">BufferType</a><span class="tsd-signature-symbol"> = BufferType.Vertex</span></h5>
+<div class="tsd-comment tsd-typography"><p>Type of enum <code>BufferType</code>. It is used to specify the type of the returned buffer. The default is
+vertex buffer</p>
+</div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">GPUBuffer</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jack1232/webgpu-simplified/blob/08f3b35/src/index.ts#L252">index.ts:252</a></li></ul></aside></li></ul></section></div>
+<li>Defined in <a href="https://github.com/jack1232/webgpu-simplified/blob/579ebfb/src/index.ts#L409">index.ts:409</a></li></ul></aside></li></ul></section></div>
 <div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 <div class="tsd-navigation settings">
 <details class="tsd-index-accordion"><summary class="tsd-accordion-summary">
