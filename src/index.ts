@@ -4,6 +4,19 @@ import * as Stats from 'stats.js';
 import { GUI } from 'dat.gui';
 
 // #region WebGPU initialization **************************************************************
+
+/**
+ * Interface as input of the `initWebGPU` function.
+ */
+export interface IWebGPUInitInput {
+    /** HTML canvas element */
+    canvas: HTMLCanvasElement;
+    /** The GPU texture format */
+    format?: GPUTextureFormat;
+    /** MSAA count (1 or 4) */
+    msaaCount?: number;
+}
+
 /**
  * Interface as output of the `initWebGPU` function. 
  */
@@ -18,36 +31,43 @@ export interface IWebGPUInit {
     size?: {width: number, height: number};
     /** The background color for the scene */
     background?: {r: number, g: number, b: number, a: number};
+    /** MSAA count (1 or 4) */
+    msaaCount?: number;
 }
 
 /**
  * This function is used to initialize the WebGPU apps. It returns the IWebGPUInit interface.
  * 
- * @param canvas - The HTML canvas element
- * @param format - The GPU texture format with default: `navigator.gpu.getPreferredCanvasFormat()`
+ * @param input - The input argument of the `IWebGPUInitInput` interface type with default members:
+ * 
+ * `input.format = navigator.gpu.getPreferredCanvasFormat()` 
+ * 
+ * `input.msaa.Count = 1`
  */
-export const initWebGPU = async (canvas: HTMLCanvasElement, 
-    format: GPUTextureFormat = navigator.gpu.getPreferredCanvasFormat()): Promise<IWebGPUInit> => {
-
+export const initWebGPU = async (input: IWebGPUInitInput): Promise<IWebGPUInit> => {
+    // set default parameters
+    input.format = input.format === undefined? navigator.gpu.getPreferredCanvasFormat(): input.format;
+    input.msaaCount = input.msaaCount === undefined? 1: input.msaaCount;
+    
     if(checkWebGPUSupport.includes('does not support WebGPU')){
         throw(checkWebGPUSupport);
     }
     
     const adapter = await navigator.gpu.requestAdapter();
     const device = await adapter.requestDevice();
-    const context = canvas.getContext('webgpu') as GPUCanvasContext;
+    const context = input.canvas.getContext('webgpu') as GPUCanvasContext;
     const pixelRatio = window.devicePixelRatio || 1;
-    canvas.width = canvas.clientWidth * pixelRatio;
-    canvas.height = canvas.clientHeight * pixelRatio;
-    const size = {width: canvas.width, height: canvas.height};
+    input.canvas.width = input.canvas.clientWidth * pixelRatio;
+    input.canvas.height = input.canvas.clientHeight * pixelRatio;
+    const size = {width: input.canvas.width, height: input.canvas.height};
     context.configure({
         device: device,
-        format: format,
+        format: input.format,
         alphaMode: 'opaque',
         usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC
     });
     const background = { r: 0.009, g: 0.0125, b: 0.0164, a: 1.0 };
-    return {device, context, format, size, background};    
+    return {device, context, format:input.format, size, background, msaaCount:input.msaaCount};    
 }
 
 /** A string variable used to check whether your browser supports WebGPU or not.*/
@@ -82,24 +102,18 @@ export interface IPipeline {
     numVertices?: number,
     /** The number of instances */
     numInstances?: number,
-    /** The MSAA count ( 1 or 4) */
-    msaaCount?: number,
 }
 
 /** Interface as input of the `createRenderPipelineDescriptor` function. */
 export interface IRenderPipelineInput {
-    /** The GPU device */
-    device: GPUDevice,
-    /** The GPU texture format */
-    format?: GPUTextureFormat, 
+    /** The IWebGPU interface */
+    init: IWebGPUInit,
     /** The GPU primative topology with default `'triangle-list'` */
     primitiveType?: GPUPrimitiveTopology,
     /** The GPU index format (undefined for `'list'` primitives or `'uint32'` for `'strip'` primitives) */
     indexFormat?: GPUIndexFormat,
     /** The GPU cull mode - defines which polygon orientation will be culled */
     cullMode?: GPUCullMode,
-    /** The MSAA count ( 1 or 4) */
-    msaaCount?: number,
     /** The boolean variable - indicates whether the render pipeline should include a depth stencial state or not */
     isDepthStencil?: boolean,
     /** The `buffers` attribute of the vertex state in a render pipeline descriptor */
@@ -121,7 +135,7 @@ export interface IRenderPipelineInput {
  * 
  * @param input - The `input` argument is a type of the `IRenderPipelineInput` interface with the following default values:
  * `input.primitiveType`: `'triangle-list'`, `input.cullMode`: `'none'`, `input.isDepthStencil`: `true`, 
- * `input.vsEntry`: `'vs_main'`,  `input.fsEntry`: `'fs_main'`, `input.msaaCount`: `1`. If `input.shader` is specified, then
+ * `input.vsEntry`: `'vs_main'`,  `input.fsEntry`: `'fs_main'`. If `input.shader` is specified, then
  * `input.vsShader = input.shader` and `input.fsShader = input.shader` 
  * 
  * @param withFragment - Indicates whether the GPU fragment state should be included or not. Default value is `true`. 
@@ -135,7 +149,7 @@ export const createRenderPipelineDescriptor = (input: IRenderPipelineInput, with
     input.isDepthStencil = input.isDepthStencil === undefined? true: input.isDepthStencil;
     input.vsEntry = input.vsEntry === undefined? 'vs_main': input.vsEntry;
     input.fsEntry = input.fsEntry === undefined? 'fs_main': input.fsEntry;
-    input.msaaCount = input.msaaCount === undefined? 1: input.msaaCount;
+
     if(input.shader){
         input.vsShader = input.shader;
         input.fsShader = input.shader;
@@ -150,20 +164,20 @@ export const createRenderPipelineDescriptor = (input: IRenderPipelineInput, with
     let descriptor: GPURenderPipelineDescriptor = {
         layout:'auto',
         vertex: {
-            module: input.device.createShaderModule({                    
+            module: input.init.device.createShaderModule({                    
                 code: input.vsShader,
             }),
             entryPoint: input.vsEntry,
             buffers: input.buffers,
         },
         fragment: withFragment? {
-            module: input.device.createShaderModule({                    
+            module: input.init.device.createShaderModule({                    
                 code: input.fsShader,
             }),
             entryPoint: input.fsEntry,
             targets: [
                 {
-                    format: input.format
+                    format: input.init.format
                 }
             ],
         }: undefined,
@@ -173,7 +187,7 @@ export const createRenderPipelineDescriptor = (input: IRenderPipelineInput, with
             cullMode: input.cullMode,
         },
         multisample: {
-            count: input.msaaCount,
+            count: input.init.msaaCount,
         }
     };
 
@@ -257,7 +271,9 @@ export const setVertexBuffers = (formats: GPUVertexFormat[],
                 offset: offsets[i],
             });
         }
-        if(totalArrayStride < 1) totalArrayStride = strides;
+        if(totalArrayStride > 0) {
+            strides = totalArrayStride;
+        }
         buffers = [{            
             arrayStride: totalArrayStride,
             attributes: attributes as Iterable<GPUVertexAttribute>
@@ -273,13 +289,11 @@ export const setVertexBuffers = (formats: GPUVertexFormat[],
 /** Interface as input of the `createRenderPassDescriptor` function. */
 export interface IRenderPassInput {
     /** The IWebGPUInit interface */
-    IWebGPUInit?: IWebGPUInit,
+    init?: IWebGPUInit,
     /** The GPU texture view */
     textureView?: GPUTextureView,
     /** The depth texture view */
     depthView?: GPUTextureView,
-    /** MSAA count (1 or 4) */
-    msaaCount?: number
 }
 
 /**
@@ -291,19 +305,17 @@ export interface IRenderPassInput {
  * @param input The type of interface `IRenderPassInput`
  * @param withColorAttachment Indicates whether the descriptor should contain color attachments or not
  */
-export const createRenderPassDescriptor = (input: IRenderPassInput, withColorAttachment = true): GPURenderPassDescriptor => {
-    input.msaaCount = input.msaaCount === undefined? 1: input.msaaCount;
-    
-    const colorAttachmentView = input.msaaCount > 1? input.textureView: 
-        input.IWebGPUInit.context.getCurrentTexture().createView();
-    const colorAttachmentResolveTarget = input.msaaCount>1?
-        input.IWebGPUInit.context.getCurrentTexture().createView(): undefined;
+export const createRenderPassDescriptor = (input: IRenderPassInput, withColorAttachment = true): GPURenderPassDescriptor => {    
+    const colorAttachmentView = input.init.msaaCount > 1? input.textureView: 
+        input.init.context.getCurrentTexture().createView();
+    const colorAttachmentResolveTarget = input.init.msaaCount>1?
+        input.init.context.getCurrentTexture().createView(): undefined;
 
     const descriptor: GPURenderPassDescriptor = {
         colorAttachments: withColorAttachment? [{
             view: colorAttachmentView,
             resolveTarget: colorAttachmentResolveTarget,
-            clearValue: input.IWebGPUInit.background,
+            clearValue: input.init.background,
             loadOp:'clear',
             storeOp: 'store'
         }] as Iterable<GPURenderPassColorAttachment>: [],
@@ -347,10 +359,18 @@ export enum BufferType {
  * 
  * `const data = [dat.positions, dat.normals, dat.uvs, dat.indices];`
  * 
- * If the data is generated in such a way that each vertex contains all attributes (`position`, `normal`, `uv` ) and  it is 
+ * Of course, for this data array, you also need to define corresponding vertex buffer array in the render pipeline:
+ * 
+ * `p.vertexBuffers = [positonBuffer, normalBuffer, uvBuffer, indexBuffer];`
+ * 
+ * If the data is generated in such a way that the vertex data contains all attributes (`position`, `normal`, `uv` ) and  it is 
  * stored in a single buffer, we can specify the `data` array using the code:
  * 
- * `data = [dat.vertices, dat.indices];` 
+ * `const data = [dat.vertices, dat.indices];` 
+ * 
+ * and corresponding vertex buffer array:
+ * 
+ * `p.vertexBuffers = [vertexBuffer, indexBuffer];`
  * 
  * @param origNumVertices The data length of the first element in the original `data` array.
  */
@@ -488,16 +508,13 @@ otherResources:GPUBindingResource[] = []): GPUBindGroup => {
 
 /**
  * This function create a GPU texture for MSAA (or sample) count = 4.
- * @param device GPU device
- * @param size Of type `GPUExtent3D`. The width, height, and depth or layer count of the texture
- * @param format GPU texture format.
+ * @param init The `IWebGPUInit` interface
  */
-export const createMultiSampleTexture = (device: GPUDevice, size: GPUExtent3DStrict, 
-format: GPUTextureFormat): GPUTexture => {
-    const texture = device.createTexture({
-        size,
-        format: format,
-        sampleCount: 4,
+export const createMultiSampleTexture = (init: IWebGPUInit): GPUTexture => {
+    const texture = init.device.createTexture({
+        size: init.size,
+        format: init.format,
+        sampleCount: init.msaaCount,
         usage: GPUTextureUsage.RENDER_ATTACHMENT,
     });
     return texture;
@@ -505,17 +522,14 @@ format: GPUTextureFormat): GPUTexture => {
     
 /**
  * This function creates a GPU texture used in the depth stencil attachment in the render pass descriptor.
- * @param device GPU device
- * @param size Of type `GPUExtent3D`. The width, height, and depth or layer count of the texture
- * @param msaaCount MSAA count (1 or 4), defaulting to 1
- * @param format GPU texture format, defaulting to `'depth24plus'`
+ * @param init The `IWebGPUInit` interface
+ * @param depthFormat GPU texture format, defaulting to `'depth24plus'`
  */
-export const createDepthTexture = (device: GPUDevice, size: GPUExtent3DStrict, 
-msaaCount:number = 1, format: GPUTextureFormat = 'depth24plus'): GPUTexture => {
-    const depthTexture = device.createTexture({
-        size,
-        format,
-        sampleCount: msaaCount,
+export const createDepthTexture = (init: IWebGPUInit, depthFormat: GPUTextureFormat = 'depth24plus'): GPUTexture => {
+    const depthTexture = init.device.createTexture({
+        size: init.size,
+        format : depthFormat,
+        sampleCount: init.msaaCount,
         usage: GPUTextureUsage.RENDER_ATTACHMENT,
     });
     return depthTexture;

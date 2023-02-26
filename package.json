@@ -1,7 +1,7 @@
 {
   "name": "webgpu-simplified",
   "version": "0.1.27",
-  "description": "Creating a variety of helper functions to simplify the process for building WebGPU applications.",
+  "description": "A collection of helper functions to simplify the process of building WebGPU applications.",
   "main": "index.js",
   "types": "lib/index.d.ts",
   "scripts": {

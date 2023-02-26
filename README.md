@@ -1,7 +1,6 @@
 WebGPU is a work-in-progress graphics API and future web standard for graphics and compute. The intension of this `webgpu-simplified` package is to simplify the process of building WebGPU apps. It is a side project that has come out of the examples included in my soon-to-be-published book [**"Advanced GPU Graphics with WebGPU"**](https://drxudotnet.com). It is not a renderer nor a render engine, but simply  a collection of helper functions and interfaces. Unlike a render engine, this mini librray does not alter the code structure and workflow of the original WebGPU applications. 
 
-The helper functions contained in this package can help you build WebGPU apps quickly and avoid code deplication in creating GPU buffers, render/compute pipelines, render pass, and 3D transformations. This mini library does not do it all, and if you want add more features to it, you can do it by pulling the GitHub repo. In some cases where a particular feature may not be implemented in the package, you can always write the standard WebGPU code for it, which is much more flexible than a render engine. 
-
+The helper functions contained in this package can help you build WebGPU apps quickly and avoid code deplication in creating GPU buffers, render/compute pipelines, render pass, and 3D transformations. This mini library does not do it all, and if you want add more features to it, you can do it by pulling the GitHub repo. In some cases where a particular feature may not be implemented in the package, you can always write the standard WebGPU code for it, which is much more flexible than a render engine.  
 
 # Usage
 
@@ -100,8 +99,7 @@ import * as ws from "webgpu-simplified";
 
 let bufs = ws.setVertexBuffers(['float32x3', 'float32x3', 'float32x2]);
 const descriptor = ws.createRenderPipelineDescriptor({
-    device, shader,
-    format: navigator.gpu.getPreferredCanvasFormat()
+    init, shader,
     buffers: bufs,
 });
 
@@ -135,10 +133,9 @@ We can simplify this code using `webgpu-simplified` with the following code:
 
 ```
 const descriptor = ws.createRenderPassDescriptor({
-    IWebGPUInit,
+    init,
     depthView: depthTexture.createView(),
     textureView: gpuTexture.createView(),
-    msaaCount: 4,
 });
 ```
 ## Simplify bind-group creation
@@ -323,9 +320,9 @@ const uniformBuffer = ws.createBufferWithData(device, data, ws.BufferType.Storag
 ## Transformations
 
 Like WebGL, WebGPU does not provide any functions for working with model, view, and projection transformations. 
-In this mini library, I implement several helper functions for creating varous 3D transformations using a popular JavaScript package `gl-matrix`.
+In this mini library, I implement several helper functions for generating varous 3D transformations using a popular JavaScript package `gl-matrix`.
 
-Here is the sample code for creating transformations:
+Here is the sample code for creating various transformations:
 
 ```
 import * as ws from 'webgpu-simplified';
@@ -344,18 +341,18 @@ const projectionMat = ws.createProjectionMat(aspectRatio);
 // combine model, view, and projection matrices to form mvp matrix:
 const mvpMat = ws.combineMvpMat(modelMat, viewMat, projectionMat);
 ```
-You can see that our package also include a `getCamera` function based a `npm` library `3d-view-controls`. 
+You can see that our package also include a `getCamera` function based on a `npm` library `3d-view-controls`. 
 This function let you create an easy to use camera that allows you to interact with graphics objects in
 the scene using mouse, such as pan, rotate, and zoom in/out the objects.
 
 ## Utility
 
-This package also include some utility functions.
+This package also includes some utility functions.
 
 # Contribution, Suggestions
 
 I accept pull requests ([GitHub repo](https://github.com/jack1232/webgpu-simplified)) for fixing issue or sharing your
-own helper functions on WebGPU with others. Any suggestions and new feature requests are also appreciated.
+own helper functions on WebGPU with others. Any suggestions and new feature requests would be welcomed and much appreciated.
 
 # License
 
