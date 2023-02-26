@@ -2,8 +2,8 @@
   "name": "webgpu-simplified",
   "version": "0.1.27",
   "description": "A collection of helper functions to simplify the process of building WebGPU applications.",
-  "main": "index.min.js",
-  "types": "lib/index.d.ts",
+  "main": "./lib/index.min.js",
+  "types": "./lib/index.d.ts",
   "scripts": {
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
