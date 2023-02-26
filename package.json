@@ -2,7 +2,7 @@
   "name": "webgpu-simplified",
   "version": "0.1.27",
   "description": "A collection of helper functions to simplify the process of building WebGPU applications.",
-  "main": "index.js",
+  "main": "index.min.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
@@ -31,6 +31,7 @@
     "lib/**/*"
   ],
   "devDependencies": {
+    "esbuild": "^0.17.10",
     "prettier": "^2.8.4",
     "ts-jest": "^29.0.5",
     "tslint": "^6.1.3",
