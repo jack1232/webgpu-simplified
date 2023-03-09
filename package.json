@@ -41,7 +41,7 @@
   "dependencies": {
     "@types/dat.gui": "^0.7.7",
     "@types/stats.js": "^0.17.0",
-    "@webgpu/types": "^0.1.27",
+    "@webgpu/types": "^0.1.30",
     "3d-view-controls": "^2.2.2",
     "dat.gui": "^0.7.9",
     "gl-matrix": "^3.4.3",

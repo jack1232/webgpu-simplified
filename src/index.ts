@@ -659,6 +659,55 @@ export const getCamera = (canvas: HTMLCanvasElement, options: ICameraOptions) =>
 // #endregion Transformations *****************************************************************
 
 
+// #region image texture **********************************************************************
+
+/**
+ * This function creates a texture and a sampler from an image file, and returns an object that contains 
+ * attributes `texture` and `sampler`.
+ * @param device GPU device
+ * @param imageFile the path of the image file to load
+ * @param addressModeU (optional) the addressing model for the `u` texture coordinate, defaulting to `'repeat'`
+ * @param addressModeV (optional) the addressing model for the `v` texture coordinate, defaulting to `'repeat'`
+ */
+export const createImageTexture = async(device:GPUDevice, imageFile:string, 
+    addressModeU = 'repeat', addressModeV = 'repeat') => {
+
+    // get image file
+    const response = await fetch(imageFile);
+    const img = await response.blob();
+    const imageBitmap = await createImageBitmap(img);
+
+    // create sampler with linear filtering for smooth interpolation 
+    const sampler = device.createSampler({
+        minFilter: 'linear',
+        magFilter: 'linear',
+        addressModeU: addressModeU as GPUAddressMode,
+        addressModeV: addressModeV as GPUAddressMode
+    });       
+
+    // create texture
+    const texture = device.createTexture({
+        size: [imageBitmap.width, imageBitmap.height, 1],
+        format: 'rgba8unorm',
+        usage: GPUTextureUsage.TEXTURE_BINDING | 
+               GPUTextureUsage.COPY_DST | 
+               GPUTextureUsage.RENDER_ATTACHMENT
+    });
+
+    device.queue.copyExternalImageToTexture(
+        { source: imageBitmap },
+        { texture: texture },
+        [imageBitmap.width, imageBitmap.height]
+    );
+
+    return {
+        texture,
+        sampler
+    }
+}
+
+// #endregion image texture *******************************************************************
+
 // #region utility ****************************************************************************
 
 /**
