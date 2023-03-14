@@ -201,6 +201,26 @@ export const createRenderPipelineDescriptor = (input: IRenderPipelineInput, with
     return descriptor;
 }
 
+
+/**
+ * This function create a compute pipeline descriptor that will be used to create a compute pipeline.
+ * @param device GPU Device
+ * @param csShader the WGSL compute shader 
+ * @param entry the entry point for teh compute shader
+ * @returns the compute pipeline descriptor.
+ */
+export const createComputePipelineDescriptor = (device: GPUDevice, csShader: string, entry = 'cs_main'): GPUComputePipelineDescriptor => {
+    return {
+        layout:'auto',
+        compute: {
+            module: device.createShaderModule({
+                code: csShader,
+            }),
+            entryPoint: 'cs_main',
+        }
+    };
+}
+
 /**
  * This function sets the `buffers` attribute of the vertex state in a render pipeline. In this function, the input argument
  * `formats` is a GPU vertex-format array. It can be specified as `'float32'`, `'float32x2'`,
