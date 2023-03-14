@@ -340,8 +340,14 @@ export enum BufferType {
     Uniform,
     /** Vertex buffer */
     Vertex,
+    /** Index buffer */
+    Index,
     /** Storage buffer */
     Storage,
+    /** vertex-Storage buffer */
+    VertexStorage,
+    /** Index-Storage buffer */
+    IndexStorage,
 }
 
 /**
@@ -400,10 +406,15 @@ export const createBuffer = (device:GPUDevice, bufferSize:number, bufferType = B
     let flag =  GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
     if(bufferType === BufferType.Vertex){
         flag = GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST;
+    } else if (bufferType === BufferType.Index) {
+        flag = GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST;
     } else if (bufferType === BufferType.Storage){
         flag =  GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC;
-    } 
-
+    }  else if (bufferType === BufferType.VertexStorage) {
+        flag = GPUBufferUsage.VERTEX | GPUBufferUsage.STORAGE;
+    } else if (bufferType === BufferType.IndexStorage) {
+        flag = GPUBufferUsage.INDEX | GPUBufferUsage.STORAGE;
+    }
     return device.createBuffer({
         size: bufferSize,
         usage: flag,
