@@ -544,13 +544,13 @@ otherResources:GPUBindingResource[] = []): GPUBindGroup => {
 export const readBufferData = async (device: GPUDevice, buffer: GPUBuffer, byteLength:number) => {
     const readBuffer = device.createBuffer({
         size: byteLength,
-        usage: GPUBufferUsage.MAP_READ,
+        usage: GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST,
     });
     const encoder = device.createCommandEncoder();
     encoder.copyBufferToBuffer(buffer, 0, readBuffer, 0, byteLength);
     device.queue.submit([encoder.finish()]);
-    const readData = await readBuffer.mapAsync(GPUMapMode.READ);
-    return readData;
+    await readBuffer.mapAsync(GPUMapMode.READ);     
+    return readBuffer.getMappedRange();
 }
 
 // #endregion Create, Update GPU Buffers and Bind Group ***************************************

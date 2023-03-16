@@ -265,7 +265,7 @@ export declare const createBindGroup: (device: GPUDevice, layout: GPUBindGroupLa
  * @param byteLength the size of the GPU buffer
  * @returns data from the GPU buffer
  */
-export declare const readBufferData: (device: GPUDevice, buffer: GPUBuffer, byteLength: number) => Promise<undefined>;
+export declare const readBufferData: (device: GPUDevice, buffer: GPUBuffer, byteLength: number) => Promise<ArrayBuffer>;
 /**
  * This function create a GPU texture for MSAA (or sample) count = 4.
  * @param init The `IWebGPUInit` interface
