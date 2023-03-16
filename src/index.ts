@@ -534,7 +534,13 @@ otherResources:GPUBindingResource[] = []): GPUBindGroup => {
     });
 }
 
-
+/**
+ * This function is used to read data from a GPU buffer. It can be used for debugging code.
+ * @param device GPU device
+ * @param buffer GPU buffer
+ * @param byteLength the size of the GPU buffer
+ * @returns data from the GPU buffer
+ */
 export const readBufferData = async (device: GPUDevice, buffer: GPUBuffer, byteLength:number) => {
     const readBuffer = device.createBuffer({
         size: byteLength,

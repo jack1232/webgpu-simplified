@@ -259,6 +259,14 @@ export declare const createBufferWithData: (device: GPUDevice, data: any, buffer
  */
 export declare const createBindGroup: (device: GPUDevice, layout: GPUBindGroupLayout, buffers?: GPUBuffer[], otherResources?: GPUBindingResource[]) => GPUBindGroup;
 /**
+ * This function is used to read data from a GPU buffer. It can be used for debugging code.
+ * @param device GPU device
+ * @param buffer GPU buffer
+ * @param byteLength the size of the GPU buffer
+ * @returns data from the GPU buffer
+ */
+export declare const readBufferData: (device: GPUDevice, buffer: GPUBuffer, byteLength: number) => Promise<undefined>;
+/**
  * This function create a GPU texture for MSAA (or sample) count = 4.
  * @param init The `IWebGPUInit` interface
  */
