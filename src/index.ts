@@ -78,7 +78,7 @@ export const checkWebGPUSupport = navigator.gpu? 'Great, your current browser su
 // #endregion WebGPU initialization ***********************************************************
 
 
-// #region Render Pipeline Descriptor *********************************************************
+// #region Pipeline Descriptor ****************************************************************
 
 /**
  * Interface as the output of a render pipeline.
@@ -301,7 +301,8 @@ export const setVertexBuffers = (formats: GPUVertexFormat[],
     }
     return buffers; 
 }
-// #endregion Render Pipeline Descriptor ******************************************************
+
+// #endregion Pipeline Descriptor *************************************************************
 
 
 // #region Render pass descriptor *************************************************************
@@ -423,17 +424,17 @@ export const updateVertexBuffers = (device:GPUDevice, p:IPipeline, data:any[], o
  * @param bufferType Of the `BufferType` enum.
  */
 export const createBuffer = (device:GPUDevice, bufferSize:number, bufferType = BufferType.Uniform): GPUBuffer =>  {
-    let flag =  GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
+    let flag =  GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC;
     if(bufferType === BufferType.Vertex){
-        flag = GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST;
+        flag = GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC;
     } else if (bufferType === BufferType.Index) {
-        flag = GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST;
+        flag = GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC;
     } else if (bufferType === BufferType.Storage){
         flag =  GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC;
     }  else if (bufferType === BufferType.VertexStorage) {
-        flag = GPUBufferUsage.VERTEX | GPUBufferUsage.STORAGE;
+        flag = GPUBufferUsage.VERTEX | GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC;
     } else if (bufferType === BufferType.IndexStorage) {
-        flag = GPUBufferUsage.INDEX | GPUBufferUsage.STORAGE;
+        flag = GPUBufferUsage.INDEX | GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC;
     }
     return device.createBuffer({
         size: bufferSize,
@@ -532,6 +533,20 @@ otherResources:GPUBindingResource[] = []): GPUBindGroup => {
         entries: entries,
     });
 }
+
+
+export const readBufferData = async (device: GPUDevice, buffer: GPUBuffer, byteLength:number) => {
+    const readBuffer = device.createBuffer({
+        size: byteLength,
+        usage: GPUBufferUsage.MAP_READ,
+    });
+    const encoder = device.createCommandEncoder();
+    encoder.copyBufferToBuffer(buffer, 0, readBuffer, 0, byteLength);
+    device.queue.submit([encoder.finish()]);
+    const readData = await readBuffer.mapAsync(GPUMapMode.READ);
+    return readData;
+}
+
 // #endregion Create, Update GPU Buffers and Bind Group ***************************************
 
 
