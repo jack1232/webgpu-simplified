@@ -43,8 +43,9 @@ export interface IWebGPUInit {
  * `input.format = navigator.gpu.getPreferredCanvasFormat()` 
  * 
  * `input.msaa.Count = 1`
+ * @param deviceDescriptor - Describes a device request. {} means the default setting is used 
  */
-export const initWebGPU = async (input: IWebGPUInitInput): Promise<IWebGPUInit> => {
+export const initWebGPU = async (input: IWebGPUInitInput, deviceDescriptor:GPUDeviceDescriptor = {}): Promise<IWebGPUInit> => {
     // set default parameters
     input.format = input.format === undefined? navigator.gpu.getPreferredCanvasFormat(): input.format;
     input.msaaCount = input.msaaCount === undefined? 1: input.msaaCount;
@@ -52,9 +53,9 @@ export const initWebGPU = async (input: IWebGPUInitInput): Promise<IWebGPUInit> 
     if(checkWebGPUSupport.includes('does not support WebGPU')){
         throw(checkWebGPUSupport);
     }
-    
+
     const adapter = await navigator.gpu.requestAdapter();
-    const device = await adapter.requestDevice();
+    const device = await adapter.requestDevice(deviceDescriptor);
     const context = input.canvas.getContext('webgpu') as GPUCanvasContext;
     const pixelRatio = window.devicePixelRatio || 1;
     input.canvas.width = input.canvas.clientWidth * pixelRatio;

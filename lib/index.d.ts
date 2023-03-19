@@ -46,8 +46,9 @@ export interface IWebGPUInit {
  * `input.format = navigator.gpu.getPreferredCanvasFormat()`
  *
  * `input.msaa.Count = 1`
+ * @param deviceDescriptor - Describes a device request. {} means the default setting is used
  */
-export declare const initWebGPU: (input: IWebGPUInitInput) => Promise<IWebGPUInit>;
+export declare const initWebGPU: (input: IWebGPUInitInput, deviceDescriptor?: GPUDeviceDescriptor) => Promise<IWebGPUInit>;
 /** A string variable used to check whether your browser supports WebGPU or not.*/
 export declare const checkWebGPUSupport: string;
 /**
