@@ -46,7 +46,7 @@ export interface IWebGPUInit {
  * `input.format = navigator.gpu.getPreferredCanvasFormat()`
  *
  * `input.msaa.Count = 1`
- * @param deviceDescriptor - Describes a device request. {} means the default setting is used
+ * @param deviceDescriptor - Describes a device request. `{}` means the default setting is used
  */
 export declare const initWebGPU: (input: IWebGPUInitInput, deviceDescriptor?: GPUDeviceDescriptor) => Promise<IWebGPUInit>;
 /** A string variable used to check whether your browser supports WebGPU or not.*/
@@ -193,7 +193,15 @@ export declare enum BufferType {
     /** vertex-Storage buffer */
     VertexStorage = 4,
     /** Index-Storage buffer */
-    IndexStorage = 5
+    IndexStorage = 5,
+    /** Indirect buffer */
+    Indirect = 6,
+    /** Indirect-Storage buffer */
+    IndirectStorage = 7,
+    /** Read buffer */
+    Read = 8,
+    /** Write buffer */
+    Write = 9
 }
 /**
  * This function updates the vertex buffers when the vertex data is changed by varying some parameters by the user.

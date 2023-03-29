@@ -43,7 +43,7 @@ export interface IWebGPUInit {
  * `input.format = navigator.gpu.getPreferredCanvasFormat()` 
  * 
  * `input.msaa.Count = 1`
- * @param deviceDescriptor - Describes a device request. {} means the default setting is used 
+ * @param deviceDescriptor - Describes a device request. `{}` means the default setting is used 
  */
 export const initWebGPU = async (input: IWebGPUInitInput, deviceDescriptor:GPUDeviceDescriptor = {}): Promise<IWebGPUInit> => {
     // set default parameters
@@ -370,6 +370,14 @@ export enum BufferType {
     VertexStorage,
     /** Index-Storage buffer */
     IndexStorage,
+    /** Indirect buffer */
+    Indirect,
+    /** Indirect-Storage buffer */
+    IndirectStorage,
+    /** Read buffer */
+    Read,
+    /** Write buffer */
+    Write,
 }
 
 /**
@@ -433,9 +441,17 @@ export const createBuffer = (device:GPUDevice, bufferSize:number, bufferType = B
     } else if (bufferType === BufferType.Storage){
         flag =  GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC;
     }  else if (bufferType === BufferType.VertexStorage) {
-        flag = GPUBufferUsage.VERTEX | GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC;
+        flag = GPUBufferUsage.VERTEX | GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST;
     } else if (bufferType === BufferType.IndexStorage) {
-        flag = GPUBufferUsage.INDEX | GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC;
+        flag = GPUBufferUsage.INDEX | GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST;
+    } else if (bufferType === BufferType.Indirect) {
+        flag = GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST;
+    } else if (bufferType === BufferType.IndirectStorage) {
+        flag = GPUBufferUsage.INDIRECT | GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST;
+    } else if (bufferType === BufferType.Read){
+        flag = GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST;
+    } else if (bufferType === BufferType.Write){
+        flag = GPUBufferUsage.MAP_WRITE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST;
     }
     return device.createBuffer({
         size: bufferSize,
