@@ -476,16 +476,30 @@ const getDataType = (data:any) => Object.prototype.toString.call(data).split(/\W
  * vertex buffer
  */
 export const createBufferWithData = (device:GPUDevice, data:any, bufferType = BufferType.Vertex): GPUBuffer => {
-    let flag = GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST;
+    let flag = GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC;
     if(bufferType === BufferType.Uniform){
-        flag =  GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST;
+        flag =  GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC;
     } else if (bufferType === BufferType.Storage){
         flag =  GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC;
+    } else if (bufferType === BufferType.Index) {
+        flag = GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC;
+    }  else if (bufferType === BufferType.VertexStorage) {
+        flag = GPUBufferUsage.VERTEX | GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST;
+    } else if (bufferType === BufferType.IndexStorage) {
+        flag = GPUBufferUsage.INDEX | GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST;
+    } else if (bufferType === BufferType.Indirect) {
+        flag = GPUBufferUsage.INDIRECT | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST;
+    } else if (bufferType === BufferType.IndirectStorage) {
+        flag = GPUBufferUsage.INDIRECT | GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST;
+    } else if (bufferType === BufferType.Read){
+        flag = GPUBufferUsage.MAP_READ | GPUBufferUsage.COPY_DST;
+    } else if (bufferType === BufferType.Write){
+        flag = GPUBufferUsage.MAP_WRITE | GPUBufferUsage.COPY_SRC | GPUBufferUsage.COPY_DST;
     }
 
     let dtype = getDataType(data);
-    if(dtype.includes('Uint')){
-        flag = GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST;
+    if(bufferType === BufferType.Vertex && dtype.includes('Uint')){
+        flag = GPUBufferUsage.INDEX | GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC;
     }    
     const buffer = device.createBuffer({
         size: data.byteLength,
