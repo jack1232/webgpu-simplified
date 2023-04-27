@@ -742,7 +742,7 @@ export const getCamera = (canvas: HTMLCanvasElement, options: ICameraOptions) =>
 // #endregion Transformations *****************************************************************
 
 
-// #region image texture **********************************************************************
+// #region texture ****************************************************************************
 
 /**
  * This function creates a texture and a sampler from an image file, and returns an object that contains 
@@ -789,7 +789,47 @@ export const createImageTexture = async(device:GPUDevice, imageFile:string,
     }
 }
 
-// #endregion image texture *******************************************************************
+/**
+ * This function creates a texture and a sampler from a 2D canvas, and returns an object that contains 
+ * attributes `texture` and `sampler`.
+ * @param device GPU device
+ * @param canvas the HTML canvas element
+ * @param addressModeU (optional) the addressing model for the `u` texture coordinate, defaulting to `'repeat'`
+ * @param addressModeV (optional) the addressing model for the `v` texture coordinate, defaulting to `'repeat'`
+ */
+export const createCanvasTexture = async(device:GPUDevice, canvas:HTMLCanvasElement, 
+    addressModeU = 'repeat', addressModeV = 'repeat') => {
+
+    // create sampler with linear filtering for smooth interpolation 
+    const sampler = device.createSampler({
+        minFilter: 'linear',
+        magFilter: 'linear',
+        addressModeU: addressModeU as GPUAddressMode,
+        addressModeV: addressModeV as GPUAddressMode
+    });       
+
+    // create texture
+    const texture = device.createTexture({
+        size: { width: canvas.width, height: canvas.height },
+        format: 'rgba8unorm',
+        usage: GPUTextureUsage.TEXTURE_BINDING | 
+               GPUTextureUsage.COPY_DST | 
+               GPUTextureUsage.RENDER_ATTACHMENT
+    });
+
+    device.queue.copyExternalImageToTexture(
+        { source: canvas, flipY: true },
+        { texture: texture },
+        [canvas.width, canvas.height]
+    );
+
+    return {
+        texture,
+        sampler
+    }
+}
+
+// #endregion texture *************************************************************************
 
 // #region utility ****************************************************************************
 

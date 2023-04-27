@@ -368,6 +368,18 @@ export declare const createImageTexture: (device: GPUDevice, imageFile: string, 
     sampler: GPUSampler;
 }>;
 /**
+ * This function creates a texture and a sampler from a 2D canvas, and returns an object that contains
+ * attributes `texture` and `sampler`.
+ * @param device GPU device
+ * @param canvas the HTML canvas element
+ * @param addressModeU (optional) the addressing model for the `u` texture coordinate, defaulting to `'repeat'`
+ * @param addressModeV (optional) the addressing model for the `v` texture coordinate, defaulting to `'repeat'`
+ */
+export declare const createCanvasTexture: (device: GPUDevice, canvas: HTMLCanvasElement, addressModeU?: string, addressModeV?: string) => Promise<{
+    texture: GPUTexture;
+    sampler: GPUSampler;
+}>;
+/**
  * This utility function convert `hex` color string to `rgba` color array of the `Float32Array` type.
  * @param hex Hex color string
  */
