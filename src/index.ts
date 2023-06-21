@@ -261,8 +261,8 @@ export const createComputePipelineDescriptor = (device: GPUDevice, csShader: str
  * correspond with a `@location` attribute declared in the vertex shader. This is an optional argument.
  * @returns An array of GPU vertex buffer layout.
  */
-export const setVertexBuffers = (formats: GPUVertexFormat[], 
-    offsets:number[] = [], totalArrayStride = 0, shaderLocations:number[] = []): Iterable<GPUVertexBufferLayout> => {
+export const setVertexBuffers = (formats: GPUVertexFormat[], offsets:number[] = [], totalArrayStride = 0, 
+shaderLocations:number[] = []): Iterable<GPUVertexBufferLayout> => {
     const len = formats.length
     const len1 = offsets.length;
     const len2 = shaderLocations.length;
@@ -506,6 +506,7 @@ export const createBufferWithData = (device:GPUDevice, data:any, bufferType = Bu
         usage: flag,
         mappedAtCreation: true
     });
+
     if(dtype.includes('Uint32')){
         new Uint32Array(buffer.getMappedRange()).set(data);
     } else if(dtype.includes('Uint16')){
